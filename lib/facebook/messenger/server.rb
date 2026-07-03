@@ -72,6 +72,10 @@ module Facebook
       # @raise BadRequestError if the request has been tampered with.
       #
       def check_integrity
+        # Integrity check is opt-in via the FB_CHECK_INTEGRITY environment
+        # variable, and is disabled by default.
+        return unless check_integrity_enabled?
+
         # If app secret is not found in environment, return.
         # So for the security purpose always add provision in
         #   configuration provider to return app secret.
@@ -85,6 +89,16 @@ module Facebook
 
         raise BadRequestError, 'Error checking message integrity'.freeze \
           unless valid_signature?
+      end
+
+      #
+      # Checks whether integrity checking is enabled via the
+      # FB_CHECK_INTEGRITY environment variable. Disabled by default.
+      #
+      # @return [Boolean] true if integrity check should be performed.
+      #
+      def check_integrity_enabled?
+        %w[true 1].include?(ENV['FB_CHECK_INTEGRITY'.freeze].to_s.downcase)
       end
 
       # Returns a String describing the X-Hub-Signature header.

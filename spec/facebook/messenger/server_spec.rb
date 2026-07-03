@@ -114,13 +114,31 @@ describe Facebook::Messenger::Server do
       end
     end
 
-    context 'integrity check' do
+    context 'integrity check disabled by default' do
       before do
         ENV['APP_SECRET'] = app_secret
       end
 
       after do
         ENV['APP_SECRET'] = nil
+      end
+
+      it 'triggers the bot even without a valid signature' do
+        expect(Facebook::Messenger::Bot).to receive(:trigger)
+
+        post '/', payload
+      end
+    end
+
+    context 'integrity check' do
+      before do
+        ENV['APP_SECRET'] = app_secret
+        ENV['FB_CHECK_INTEGRITY'] = 'true'
+      end
+
+      after do
+        ENV['APP_SECRET'] = nil
+        ENV['FB_CHECK_INTEGRITY'] = nil
       end
 
       it 'do not trigger if fails' do

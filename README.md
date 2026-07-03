@@ -422,6 +422,14 @@ export APP_SECRET=a885a...
 export VERIFY_TOKEN=95vr15g...
 ```
 
+By default, the webhook does not verify the `X-Hub-Signature` header sent by
+Facebook (payload integrity check). To enable it, set the `FB_CHECK_INTEGRITY`
+environment variable to `true`:
+
+```bash
+export FB_CHECK_INTEGRITY=true
+```
+
 If your bot lives on multiple Facebook Pages, make a _configuration provider_
 to keep track of access tokens, app secrets and verify tokens for each of them:
 
